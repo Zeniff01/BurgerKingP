@@ -1,30 +1,63 @@
 const puppeteer = require('puppeteer');
 
-(async () => {
+const facturaData={
+  rfc:'QUBZ020201HH',
+  ticket:'232561607' ,
+  store:'07097',
+  date:'26/12/2024'
+};
 
-  const browser = await puppeteer.launch({ headless: false, edefaultViewport: false,userDataDir: "./tmp", }); // headless:false para ver el navegador
-  const page = await browser.newPage();
-
-  await page.goto('https://alsea.interfactura.com/RegistroDocumento.aspx?opc=BurgerKing', { waitUntil: 'networkidle2' });
-
-  await page.type('#rfc', 'QUBZ020201HH', { delay: 800 }); 
-  await new Promise(resolve => setTimeout(resolve, 850));
-  await page.type('#ticket', '232561607',{delay: 750});
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  await page.type('#tienda','07097',{delay: 1000});
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  await page.type('#dtFecha','26/12/2024',{delay: 800});
-  await new Promise(resolve => setTimeout(resolve, 2000));
+async function procesarFactura(facturaData) {
   
-  await page.click('button[type="submit"]');
+  let browser;
 
-  await browser.close();
-})();
+  try {
+    browser = await puppeteer.launch({
+      headless: false,
+      defaultViewport: false,
+      userDataDir: "./tmp",
+    });
+
+    const page = await browser.newPage();
+    await page.goto('https://alsea.interfactura.com/RegistroDocumento.aspx?opc=BurgerKing', {
+      waitUntil: 'networkidle2'
+    });
+    console.log('Llenando campo rfc')
+    await page.waitForSelector('#rfc',{visible: true});
+    await page.type('#rfc', facturaData.rfc, { delay: 80 }); 
+
+    console.log('Llenando campo ticket')
+    await page.waitForSelector('#ticket',{visible: true});
+    await page.type('#ticket', facturaData.ticket, { delay: 75 });
+
+    console.log('Llenando campo tienda')
+    await page.waitForSelector('#tienda',{visible: true});
+    await page.type('#tienda', facturaData.store, { delay: 100 });
+
+    console.log('Llenando campo fecha')
+    await page.waitForSelector('#dtFecha',{visible: true});
+    await page.type('#dtFecha', facturaData.date, { delay: 800 });
+
+    await page.click('button[type="submit"]');
+    console.log('Clic en boton enviar')
+
+  } catch (error) {
+    console.error('Error durante la ejecución del script:', error);
+  } finally {
+    if (browser) {
+      await browser.close();
+      console.log('Navegador cerrado correctamente.');
+    }
+  }
+};
+
+module.exports = {procesarFactura};
+procesarFactura(facturaData);
+
 
 
 /*
- Mejoras
-
+Mejoras
  1. Manejo de errores con try/catch:
  Deberías envolver toda la función asíncrona en un bloque try/catch para capturar cualquier error que pueda ocurrir durante la ejecución.
  El browser.close() debe colocarse en un bloque finally para asegurar que el navegador se cierre siempre, incluso si hay errores.
