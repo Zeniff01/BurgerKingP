@@ -55,35 +55,38 @@ module.exports = {procesarFactura};
 procesarFactura(facturaData);
 
 
-
 /*
-Mejoras
- 1. Manejo de errores con try/catch:
- Deberías envolver toda la función asíncrona en un bloque try/catch para capturar cualquier error que pueda ocurrir durante la ejecución.
- El browser.close() debe colocarse en un bloque finally para asegurar que el navegador se cierre siempre, incluso si hay errores.
+Mejoras:
 
- 2. Parametrización con variables:
- En lugar de valores codificados, definir variables al principio para facilitar cambios y reutilización:
- const facturaData = {
-   rfc: 'QUBZ020201HH',
-   ticket: '232561607',
-   tienda: '07097',
-   fecha: '26/12/2024'
- };
+PROTECCIÓN CONTRA DETECCIÓN DE BOTS:
+Usar puppeteer-extra con StealthPlugin
+Cambiar el user-agent a uno de navegador normal
 
- 3. Reemplazo de setTimeout:
- Los setTimeout fijos se pueden reemplazar por waitForSelector o waitForFunction para esperar eventos específicos en la página.
- Por ejemplo:
- - En lugar de: await new Promise(resolve => setTimeout(resolve, 850));
- - Usar: await page.waitForSelector('#ticket', { visible: true });
- Esto espera específicamente a que el campo esté listo para interactuar.
+SIMULAR COMPORTAMIENTO HUMANO:
+Crear una función para escribir como humano:
+Limpiar campo antes de escribir
+Usar velocidades variables al teclear
+Hacer que se vea natural
 
- 4. Comentarios y logs:
- Agregar mensajes de console.log para seguir el progreso y facilitar la depuración.
+Agregar pausas aleatorias entre acciones
 
- Resumen:
- Modifica este script para convertirlo en una función exportable llamada 'procesarFactura' que reciba un objeto
- con los datos (rfc, ticket, tienda, fecha) en lugar de tener valores fijos.
- Incluye manejo de errores con try/catch y asegúrate de que el navegador se cierre correctamente.
- Reemplaza los setTimeout por métodos de espera más eficientes cuando sea posible.
+MENSAJES DE ERROR CLAROS:
+Agregar timestamp a todos los logs: "2025-05-27 15:42:23 - Acción..."
+
+
+ESTRUCTURA DE DATOS JSON:
+Crear archivo factura-data.json con formato:
+{
+"rfc": "QUBZ020201HH",
+"ticket": "232561607",
+"store": "07097",
+"date": "26/12/2024"
+}
+Modificar el código para leer este JSON:
+const facturaData = require('./factura-data.json');
+Separar la ejecución en un archivo main.js o index.js:
+const { procesarFactura } = require('./index');
+const facturaData = require('./factura-data.json');
+procesarFactura(facturaData);
+
 */
